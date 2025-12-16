@@ -11,7 +11,7 @@ public class JankenContraller {
 
   @PostMapping("/janken")
   public String janken(@RequestParam String username, ModelMap model) {
-    model.addAttribute("username", username);
+    model.addAttribute("name", username);
     return "janken.html";
   }
 }
