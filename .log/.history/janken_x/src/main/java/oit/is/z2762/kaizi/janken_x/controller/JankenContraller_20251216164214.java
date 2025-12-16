@@ -10,7 +10,7 @@ import java.util.Random;
 @Controller
 public class JankenContraller {
 
-  private static final String[] HANDS = { "Gu", "Choki", "Pa" };
+  private static final String[] HANDS = {"Gu", "Choki", "Pa"};
 
   @PostMapping("/janken")
   public String janken(@RequestParam String username, ModelMap model) {
@@ -24,18 +24,6 @@ public class JankenContraller {
     Random random = new Random();
     String cpuhand = HANDS[random.nextInt(HANDS.length)];
     model.addAttribute("cpuhand", cpuhand);
-
-    String result;
-    if (hand.equals(cpuhand)) {
-      result = "Draw";
-    } else if ((hand.equals("Gu") && cpuhand.equals("Choki")) ||
-        (hand.equals("Choki") && cpuhand.equals("Pa")) ||
-        (hand.equals("Pa") && cpuhand.equals("Gu"))) {
-      result = "You Win!";
-    } else {
-      result = "You Lose";
-    }
-    model.addAttribute("result", result);
     return "janken.html";
   }
 }
