@@ -12,6 +12,11 @@ public class JankenContraller {
 
   private static final String[] HANDS = { "Gu", "Choki", "Pa" };
 
+  @GetMapping("/janken")
+  public String janken(ModelMap model) {
+    return "janken";
+  }
+
   @PostMapping("/janken")
   public String janken(@RequestParam String username, ModelMap model) {
     model.addAttribute("username", username);
