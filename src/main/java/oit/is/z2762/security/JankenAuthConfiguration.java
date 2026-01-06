@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class JankenAuthConfiguration {
+public class JankenAuthConfiguration {  // 認証・認可の設定クラス
   /**
    * 認可処理に関する設定（認証されたユーザがどこにアクセスできるか）
    *

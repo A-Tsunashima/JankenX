@@ -6,14 +6,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.ModelMap;
 import java.util.Random;
+import java.security.Principal;
+
+import oit.is.z2762.kaizi.janken_x.model.Entry;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public class JankenContraller {
 
+  @Autowired
+  private Entry entry;
+
   private static final String[] HANDS = { "Gu", "Choki", "Pa" };
 
   @GetMapping("/janken")
-  public String janken(ModelMap model) {
+  public String janken(ModelMap model, Principal prin) {
+    String username = prin.getName(); // ログインユーザの名前を取得
+    this.entry.addUser(username); // アレイリストにユーザを追加
+    model.addAttribute("username", username);
+    model.addAttribute("entry", entry);
     return "janken";
   }
 
