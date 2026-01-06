@@ -31,11 +31,12 @@ public class JankenContraller {
   @PostMapping("/janken")
   public String janken(@RequestParam String username, ModelMap model) {
     model.addAttribute("username", username);
-    return "janken.html";
+    return "janken";
   }
 
   @GetMapping("/jankengame")
   public String jankenMatch(@RequestParam String hand, ModelMap model) {
+    model.addAttribute("entry", entry);
     model.addAttribute("hand", hand);
     Random random = new Random();
     String cpuhand = HANDS[random.nextInt(HANDS.length)];
@@ -52,6 +53,6 @@ public class JankenContraller {
       result = "You Lose";
     }
     model.addAttribute("result", result);
-    return "janken.html";
+    return "janken";
   }
 }
