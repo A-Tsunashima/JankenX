@@ -13,6 +13,8 @@ import java.security.Principal;
 import oit.is.z2762.kaizi.janken_x.model.Entry;
 import oit.is.z2762.kaizi.janken_x.model.Match;
 import oit.is.z2762.kaizi.janken_x.model.MatchMapper;
+import oit.is.z2762.kaizi.janken_x.model.User;
+import oit.is.z2762.kaizi.janken_x.model.UserMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +26,9 @@ public class JankenContraller {
 
   @Autowired
   private MatchMapper MatchMapper;
+
+  @Autowired
+  UserMapper userMapper;
 
   private static final String[] HANDS = { "Gu", "Choki", "Pa" };
 
@@ -67,4 +72,25 @@ public class JankenContraller {
 
     return "janken";
   }
+
+  //追加分
+
+  @GetMapping("/match")
+  public String match(@RequestParam int id, ModelMap model, Principal prin) {
+
+    // ログインユーザ
+    String loginUser = prin.getName();
+    model.addAttribute("loginUser", loginUser);
+
+    // 対戦相手（ID指定）
+    User enemy = userMapper.selectById(id);
+    model.addAttribute("enemy", enemy);
+
+    // CPU 以外とは試合不可
+    boolean canBattle = enemy.getName().equals("CPU");
+    model.addAttribute("canBattle", canBattle);
+
+    return "match";
+  }
+  //ここまで
 }
