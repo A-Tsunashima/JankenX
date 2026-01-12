@@ -16,6 +16,9 @@ public interface UserMapper { // 直接DBのUserテーブルにアクセスす�
   //追加分
   @Select("SELECT * FROM users WHERE id = #{id}")
   User selectById(int id);
+
+  @Select("SELECT * FROM users WHERE username = #{username}")
+  User selectByUsername(String username);
   //ここまで
 
 }

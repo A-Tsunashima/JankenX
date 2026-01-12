@@ -92,5 +92,40 @@ public class JankenContraller {
 
     return "match";
   }
+
+  @GetMapping("/matchplay")
+  public String matchPlay(@RequestParam int id,
+      @RequestParam String hand,
+      ModelMap model,
+      Principal prin) {
+
+    // ログインユーザ名
+    String loginName = prin.getName();
+
+    // ★ name から User を取得（自分）
+    User me = userMapper.selectByUsername(loginName);
+
+    // ★ 対戦相手（CPU）
+    User enemy = userMapper.selectById(id);
+
+    // CPUの手（固定でOK）
+    String cpuHand = "Gu";
+
+    // ★ matches テーブルに登録
+    MatchMapper.insertMatch(
+        String.valueOf(me.getId()),
+        String.valueOf(enemy.getId()),
+        hand,
+        cpuHand);
+
+    // 表示用
+    model.addAttribute("loginUser", me.getName());
+    model.addAttribute("enemy", enemy);
+    model.addAttribute("myHand", hand);
+    model.addAttribute("cpuHand", cpuHand);
+
+    return "match";
+  }
+
   //ここまで
 }
