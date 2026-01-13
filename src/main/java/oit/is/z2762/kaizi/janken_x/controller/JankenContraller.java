@@ -5,10 +5,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.ModelMap;
+
+import java.util.ArrayList;
 import java.util.Random;
 import java.security.Principal;
 
 import oit.is.z2762.kaizi.janken_x.model.Entry;
+import oit.is.z2762.kaizi.janken_x.model.Match;
+import oit.is.z2762.kaizi.janken_x.model.MatchMapper;
+import oit.is.z2762.kaizi.janken_x.model.User;
+import oit.is.z2762.kaizi.janken_x.model.UserMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
@@ -16,6 +23,12 @@ public class JankenContraller {
 
   @Autowired
   private Entry entry;
+
+  @Autowired
+  private MatchMapper MatchMapper;
+
+  @Autowired
+  UserMapper userMapper;
 
   private static final String[] HANDS = { "Gu", "Choki", "Pa" };
 
@@ -53,6 +66,66 @@ public class JankenContraller {
       result = "You Lose";
     }
     model.addAttribute("result", result);
+
+    ArrayList<Match> matches = MatchMapper.selectAllMatches();
+    model.addAttribute("matches", matches);
+
     return "janken";
   }
+
+  //追加分
+
+  @GetMapping("/match")
+  public String match(@RequestParam int id, ModelMap model, Principal prin) {
+
+    // ログインユーザ
+    String loginUser = prin.getName();
+    model.addAttribute("loginUser", loginUser);
+
+    // 対戦相手（ID指定）
+    User enemy = userMapper.selectById(id);
+    model.addAttribute("enemy", enemy);
+
+    // CPU 以外とは試合不可
+    boolean canBattle = enemy.getName().equals("CPU");
+    model.addAttribute("canBattle", canBattle);
+
+    return "match";
+  }
+
+  @GetMapping("/matchplay")
+  public String matchPlay(@RequestParam int id,
+      @RequestParam String hand,
+      ModelMap model,
+      Principal prin) {
+
+    // ログインユーザ名
+    String loginName = prin.getName();
+
+    // ★ name から User を取得（自分）
+    User me = userMapper.selectByUsername(loginName);
+
+    // ★ 対戦相手（CPU）
+    User enemy = userMapper.selectById(id);
+
+    // CPUの手（固定でOK）
+    String cpuHand = "Gu";
+
+    // ★ matches テーブルに登録
+    MatchMapper.insertMatch(
+        String.valueOf(me.getId()),
+        String.valueOf(enemy.getId()),
+        hand,
+        cpuHand);
+
+    // 表示用
+    model.addAttribute("loginUser", me.getName());
+    model.addAttribute("enemy", enemy);
+    model.addAttribute("myHand", hand);
+    model.addAttribute("cpuHand", cpuHand);
+
+    return "match";
+  }
+
+  //ここまで
 }

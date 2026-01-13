@@ -9,10 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 // import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.AntPathMatcher;
 
 @Configuration
 @EnableWebSecurity
-public class JankenAuthConfiguration {  // 認証・認可の設定クラス
+public class JankenAuthConfiguration { // 認証・認可の設定クラス
   /**
    * 認可処理に関する設定（認証されたユーザがどこにアクセスできるか）
    *
@@ -29,11 +30,11 @@ public class JankenAuthConfiguration {  // 認証・認可の設定クラス
             .logoutUrl("/logout")
             .logoutSuccessUrl("/")) // ログアウト後に / にリダイレクト
         .authorizeHttpRequests(authz -> authz
+            .requestMatchers("/h2-console/**").permitAll()
             .requestMatchers("/janken/**").authenticated() // /sample3/以下は認証済みであること
             .anyRequest().permitAll()) // 上記以外は全員アクセス可能
-        // .csrf(csrf -> csrf
-        // .ignoringRequestMatchers("/h2-console/*", "/sample2*/**")) //
-        // sample2用にCSRF対策を無効化
+        .csrf(csrf -> csrf
+            .ignoringRequestMatchers("/h2-console/**")) // sample2用にCSRF対策を無効化
         .headers(headers -> headers
             .frameOptions(frameOptions -> frameOptions
                 .sameOrigin()));
@@ -57,9 +58,11 @@ public class JankenAuthConfiguration {  // 認証・認可の設定クラス
         .password("{bcrypt}$2y$05$rdVRDnT8SPfBQx8LMIMai.N.bkbyc76nIoThENCAidfdigpX5FoRW").roles("USER").build();
     UserDetails user2 = User.withUsername("user2")
         .password("{bcrypt}$2y$05$npDl3ITa22aZBG/Jda8alufda2jxsnbzVhkg0hQGSkrEzSjvRDeR6").roles("USER").build();
+    UserDetails user3 = User.withUsername("ほんだ")
+        .password("{bcrypt}$2y$05$Dj8VR/YkhcU0SxL0SrxGBOr9M.BhUjUYZ0Lq5vGZkK5ckVTPwPXmK").roles("USER").build();
 
     // 生成したユーザをImMemoryUserDetailsManagerに渡す（いくつでも良い）
-    return new InMemoryUserDetailsManager(user1, user2);
+    return new InMemoryUserDetailsManager(user1, user2, user3);
   }
 
 }

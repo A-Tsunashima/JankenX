@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Match</title>
+</head>
+
+<body>
+
+  <h1>対戦画面</h1>
+
+  <p>あなた：[[${loginUser}]]</p>
+  <p>対戦相手：[[${enemy.username}]]</p>
+
+  <div th:if="${canBattle}">
+    <p>CPUと対戦できます！</p>
+    <a href="/janken">じゃんけんを開始する</a>
+  </div>
+
+  <div th:unless="${canBattle}">
+    <p>このユーザとは対戦できません。</p>
+    <a href="/janken">戻る</a>
+  </div>
+
+</body>
+
+</html>

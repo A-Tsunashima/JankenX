@@ -1,0 +1,72 @@
+package oit.is.z2762.kaizi.janken_x.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.ModelMap;
+import java.util.Random;
+import java.security.Principal;
+import org.springframework.beans.factory.annotation.Autowired;
+import oit.is.z2762.kaizi.janken_x.model.MatchMapper;
+//import oit.is.z2762.kaizi.janken_x.model.Match;
+
+import oit.is.z2762.kaizi.janken_x.model.Entry;
+
+//import oit.is.z2762.kaizi.janken_x.model.User;
+
+//import oit.is.z2762.kaizi.janken_x.model.UserMapper;
+
+@Controller
+public class JankenContraller {
+
+  @Autowired
+  private Entry entry;
+
+  /*@Autowired
+  private UserMapper userMapper;*/
+
+  @Autowired
+  private MatchMapper matchMapper;
+
+  private static final String[] HANDS = { "Gu", "Choki", "Pa" };
+
+  @GetMapping("/janken")
+  public String janken(ModelMap model, Principal prin) {
+    String username = prin.getName(); // ログインユーザの名前を取得
+    this.entry.addUser(username); // アレイリストにユーザを追加
+    model.addAttribute("username", username);
+    model.addAttribute("entry", entry);
+    model.addAttribute("matches", matchMapper.selectAllMatches());
+    return "janken";
+  }
+
+  @PostMapping("/janken")
+  public String janken(@RequestParam String username, ModelMap model) {
+    model.addAttribute("username", username);
+    return "janken";
+  }
+
+  @GetMapping("/jankengame")
+  public String jankenMatch(@RequestParam String hand, ModelMap model) {
+    model.addAttribute("entry", entry);
+    model.addAttribute("hand", hand);
+    Random random = new Random();
+    String cpuhand = HANDS[random.nextInt(HANDS.length)];
+    model.addAttribute("cpuhand", cpuhand);
+    model.addAttribute("matches", matchMapper.selectAllMatches());
+
+    /*String result;
+    if (hand.equals(cpuhand)) {
+      result = "Draw";
+    } else if ((hand.equals("Gu") && cpuhand.equals("Choki")) ||
+        (hand.equals("Choki") && cpuhand.equals("Pa")) ||
+        (hand.equals("Pa") && cpuhand.equals("Gu"))) {
+      result = "You Win!";
+    } else {
+      result = "You Lose";
+    }
+    model.addAttribute("result", result);*/
+    return "janken";
+  }
+}
